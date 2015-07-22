@@ -11,7 +11,17 @@ PODS:
     - CocoaLumberjack (= 2.0.0)
 
 DEPENDENCIES:
-  - PubNub (~> 4.0)
+  - PubNub (from `https://github.com/pubnub/objective-c.git`, branch `develop`)
+
+EXTERNAL SOURCES:
+  PubNub:
+    :branch: develop
+    :git: https://github.com/pubnub/objective-c.git
+
+CHECKOUT OPTIONS:
+  PubNub:
+    :commit: 6ca345233bb69d02056dd3110856d928d7c3437f
+    :git: https://github.com/pubnub/objective-c.git
 
 SPEC CHECKSUMS:
   CocoaLumberjack: a6f77d987d65dc7ba86b0f84db7d0b9084f77bcb

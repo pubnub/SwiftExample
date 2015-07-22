@@ -67,7 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         
         //Initialize PubNub client
         myConfig = PNConfiguration(publishKey: pubKey! as String, subscribeKey: subKey! as String)
-        // # as String ^^?
         updateClientConfiguration()
         printClientConfiguration()
         
@@ -78,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         // just be sure the target has implemented the PNObjectEventListener extension
         
         self.client?.addListener(self)
-        //pubNubSetState()
+        pubNubSetState()
     }
 
     
@@ -130,10 +129,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     func pubNubTime(){
         self.client?.timeWithCompletion({ (result, status) -> Void in
-            if((result.data) != nil){
+            if let Result = result.data{
                 println("Result from Time: \(result.data.timetoken)")
             }
-            else if((status) != nil){
+            if let Status = status{
                 self.handleStatus(status)
             }
         })
@@ -149,17 +148,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
             // If you have a result, the data you specifically requested (in this case, history response) is available in result.data
             // If you have a status, error or non-error status information is available regarding the call.
             
-            if ((status) != nil) {
-                // As a status, this contains error or non-error information about the history request, but not the actual history data I requested.
-                // Timeout Error, PAM Error, etc.
-                
-                self.handleStatus(status)
-            }
-            else if ((result) != nil) {
+            if let Result = result{
                 // As a result, this contains the messages, start, and end timetoken in the data attribute
                 
                 println("Loaded history data: \(result.data.messages) with start \(result.data.start) and end \(result.data.end)")
             }
+            if let Status = status{
+                // As a status, this contains error or non-error information about the history request, but not the actual history data I requested.
+                // Timeout Error, PAM Error, etc.
+                self.handleStatus(status)
+            }
+            
         })
         
         /*
@@ -186,12 +185,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     func pubNubGlobalHereNow(){
         self.client?.hereNowWithCompletion({ (result, status) -> Void in
-            if ((status) != nil) {
-                self.handleStatus(status)
-            }
-            else if ((result) != nil) {
+            
+            if let Result = result{
                 println("^^^^ Loaded Global hereNow data: channels: \(result.data.channels), total channels: \(result.data.totalChannels), total occupancy: \(result.data.totalOccupancy)")
             }
+            if let Status = status{
+                self.handleStatus(status)
+            }
+            
         })
         // If you want to control the 'verbosity' of the server response -- restrict to (values are additive):
         
@@ -201,14 +202,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         
         self.client?.hereNowWithVerbosity(PNHereNowVerbosityLevel.Occupancy, completion: { (result, status) -> Void in
             
-            if ((status) != nil) {
-                self.handleStatus(status)
-            }
-            else if ((result) != nil) {
+            if let Result = result{
                 println("^^^^ Loaded Global hereNow data: channels: \(result.data.channels), total channels: \(result.data.totalChannels), total occupancy: \(result.data.totalOccupancy)");
             }
+            if let Status = status{
+                self.handleStatus(status)
+            }
         })
-        //^# PNHereNowVerbosityLevel.Occupancy
     }
     
     func pubNubHereNowForChannelGroups(){
@@ -220,14 +220,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     func pubNubHereNowForChannel(){
         self.client?.hereNowForChannel(channel1 as! String, withCompletion: { (result, status) -> Void in
-            if ((status) != nil) {
-                
+            
+            if let Result = result{
+                println("^^^^ Loaded hereNowForChannel data: occupancy: \(result.data.occupancy), uuids: \(result.data.uuids)")
+
+            }
+            if let Status = status{
                 self.handleStatus(status)
             }
-            else if ((result) != nil) {
-                println("^^^^ Loaded hereNowForChannel data: occupancy: \(result.data.occupancy), uuids: \(result.data.uuids)")
-            }
-        })
+            
+    })
         
         // If you want to control the 'verbosity' of the server response -- restrict to (values are additive):
         
@@ -239,22 +241,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         
         self.client?.hereNowForChannel(channel1 as! String, withVerbosity:  PNHereNowVerbosityLevel.State, completion: { (result, status) -> Void in
             //PNHereNowVerbosityLevel.State is not PNHereNowState
-            if ((status) != nil) {
-                self.handleStatus(status)
-            }
-            else if ((result) != nil) {
+            if let Result = result{
                 println("^^^^ Loaded hereNowForChannel data: occupancy: \(result.data.occupancy), uuids: \(result.data.uuids)")
+            }
+            if let Status = status{
+                self.handleStatus(status)
             }
         })
     }
     
     func pubNubWhereNow(){
         self.client?.whereNowUUID("123456", withCompletion: { (result, status) -> Void in
-            if((status) != nil){
-                self.handleStatus(status)
-            }
-            else if((result) != nil){
+            if let Result = result.data{
                 println("^^^^ Loaded whereNow data: \(result.data.channels)")
+            }
+            if let Status = status{
+                self.handleStatus(status)
             }
         })
     }
@@ -272,18 +274,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
             else{
                 println("^^^^ CGAdd Subscribe requet did not succeed. All Subscribe operations will autorety when possible")
                 self.handleStatus(status)
-                //^# strong self
             }
         })
     }
     
     func pubNubChannelsForGroup(){
         self.client?.channelsForGroup(channelGroup1 as! String, withCompletion: { (result, status) -> Void in
-            if ((status) != nil) {
-                self.handleStatus(status)
-            }
-            else if ((result) != nil) {
+            
+            if let Result = result.data{
                 println("^^^^ Loaded all channels \(result.data.channels) for group \(self.channelGroup1)");
+            }
+            if let Status = status{
+                self.handleStatus(status)
             }
         })
     }
@@ -356,7 +358,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         /*
         self.client.pushNotificationEnabledChannelsForDeviceWithPushToken((NSData *)pushToken andCompletion:(PNPushNotificationsStateAuditCompletionBlock)block)
         */
-        //^# does nothing?
     }
 
     
@@ -365,17 +366,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         self.client?.setState(["foo":"bar"] , forUUID: myConfig?.uuid, onChannel: channel1 as! String, withCompletion: { (status) -> Void in
             self.handleStatus(status)
         })
-        //^# random string stuff not done right
     }
     
     func pubNubGetState(){
         self.client?.stateForUUID(myConfig?.uuid, onChannel: channel1 as! String, withCompletion: { (result, status) -> Void in
-            if((status) != nil){
+            if let Result = result{
+                println("^^^^ Loaded state \(result.data.state) for channel \(self.channel1)")
+
+            }
+            if let Status = status{
                 self.handleStatus(status)
             }
-            else if((result) != nil){
-                println("^^^^ Loaded state \(result.data.state) for channel \(self.channel1)")
-            }
+
         })
     }
     
@@ -499,8 +501,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         
         var pamResourceName: AnyObject = (status.errorData.channels != nil) ? status.errorData.channels[0] : status.errorData.channelGroups
         var pamResourceType = (status.errorData.channels != nil) ? "channel" : "channel-groups"
-        // # ^
-        
         
         println("PAM error on \(pamResourceType) \(pamResourceName)");
         
@@ -579,18 +579,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     }
 
 
-
-
-    
-    
-//    func pubNubSetState(){
-//        weak var weakSelf = self
-//        self.client?.setState(["foo":"bar"] , forUUID: myConfig?.uuid, onChannel: channel1, withCompletion: { (status) -> Void in
-//            var strongSelf = weakSelf
-//            handleStatus(strongSelf.status)
-//        })
-//        //^#
-//    }
     
     func updateClientConfiguration(){
         // Set PubNub Configuration
@@ -621,7 +609,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     func printClientConfiguration(){
         // Get PubNub Options
         println("TLSEnabled: \(self.myConfig?.TLSEnabled) ")
-        //^# yes or no
         println("Origin: \(self.myConfig!.origin)")
         println("authKey: \(self.myConfig!.authKey)")
         println("UUID: \(self.myConfig!.uuid)");
