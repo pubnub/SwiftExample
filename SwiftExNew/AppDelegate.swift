@@ -140,7 +140,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     
     func pubNubHistory(){
         // History
-        
         self.client?.historyForChannel(channel1 as! String, withCompletion: { (result, status) -> Void in
             // For completion blocks that provide both result and status parameters, you will only ever
             // have a non-nil status or result.
@@ -265,9 +264,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         weak var weakSelf = self
         
         self.client?.addChannels([channel1 as! String, channel2 as! String], toGroup: channelGroup1 as! String, withCompletion: { (status) -> Void in
-            
-//            var strongSelf = weakSelf
-            
             if(!status.error){
                 println("^^^^ CGAdd Request Succeeded")
             }
@@ -396,7 +392,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         
         if(status.error){
             handleErrorStatus(status as! PNErrorStatus)
-            // # ^ as!
         }
         else{
             handleNonErrorStatus(status)
@@ -406,7 +401,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
     func handleErrorStatus(status : PNErrorStatus){
         println("Debug: \(status.debugDescription)")
         println("handleErrorStatus: PAM Error: for resource Will Auto Retry?: \(status.automaticallyRetry)")
-        // # ^ ? YES OR NO
         
         if (status.category == PNStatusCategory.PNAccessDeniedCategory) {
             self.handlePAMError(status)
@@ -454,7 +448,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
         if (status.operation == PNOperationType.SubscribeOperation) {
             
             var subscriberStatus: PNSubscribeStatus = status as! PNSubscribeStatus
-            // ^ #
             // Specific to the subscribe loop operation, you can handle connection events
             // These status checks are only available via the subscribe status completion block or
             // on the long-running subscribe loop listener didReceiveStatus
@@ -544,9 +537,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
                 
             })
             
-            
-            //self.client = client
-            
             self.client?.subscribeToChannels(currentChannels as [AnyObject], withPresence: false)
             self.client?.subscribeToChannelGroups(currentChannelGroups as [AnyObject], withPresence: false)
         }
@@ -562,8 +552,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PNObjectEventListener {
                 self.handleStatus(status)
             }
         })
-        
-        /////^ # compressed
         
         /*
         [self.client publish:<#(id)message#> toChannel:<#(NSString *)channel#> compressed:<#(BOOL)compressed#> withCompletion:<#(PNPublishCompletionBlock)block#>];
